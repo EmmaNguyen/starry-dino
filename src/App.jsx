@@ -1,30 +1,41 @@
-import { useState, useRef } from 'react'
-import { Search, Mic, Play, Pause, Loader2, AlertCircle, Radio, BookOpen, Sparkles, Headphones, Zap, Waves, Image as ImageIcon } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Search,
+  Mic,
+  Play,
+  Pause,
+  Loader2,
+  AlertCircle,
+  Radio,
+  BookOpen,
+  Sparkles,
+  Headphones,
+  Zap,
+  Waves,
+  Link as LinkIcon,
+} from 'lucide-react'
 
 const modes = [
-  { 
-    id: 'podcast', 
-    name: 'Podcast', 
-    icon: Radio, 
-    description: 'Conversational tone, like a podcast host', 
-    color: 'from-purple-500 to-pink-500',
-    image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=400&h=300&fit=crop'
+  {
+    id: 'podcast',
+    name: 'Podcast',
+    icon: Radio,
+    description: 'Natural and conversational',
+    accent: 'from-emerald-500 to-cyan-500',
   },
-  { 
-    id: 'professor', 
-    name: 'Professor', 
-    icon: BookOpen, 
-    description: 'Clear, structured, educational', 
-    color: 'from-blue-500 to-cyan-500',
-    image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop'
+  {
+    id: 'professor',
+    name: 'Professor',
+    icon: BookOpen,
+    description: 'Clear, structured, and educational',
+    accent: 'from-blue-500 to-indigo-500',
   },
-  { 
-    id: 'story', 
-    name: 'Story', 
-    icon: Sparkles, 
-    description: 'Narrative storytelling with vivid descriptions', 
-    color: 'from-amber-500 to-orange-500',
-    image: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=400&h=300&fit=crop'
+  {
+    id: 'story',
+    name: 'Story',
+    icon: Sparkles,
+    description: 'Narrative and expressive',
+    accent: 'from-orange-500 to-rose-500',
   }
 ]
 
@@ -35,7 +46,11 @@ function App() {
   const [error, setError] = useState('')
   const [result, setResult] = useState(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
   const audioRef = useRef(null)
+
+  const selectedMode = useMemo(() => modes.find((m) => m.id === mode) ?? modes[0], [mode])
 
   const handleSearch = async () => {
     if (!query.trim()) {
@@ -70,7 +85,7 @@ function App() {
 
       setResult(data)
     } catch (err) {
-      setError(err.message || 'Failed to search. Please make sure the backend server is running.')
+      setError(err.message || 'Unable to generate an answer. Make sure the backend server is running on port 3001.')
     } finally {
       setIsLoading(false)
     }
@@ -87,99 +102,87 @@ function App() {
     }
   }
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
       e.preventDefault()
       handleSearch()
     }
   }
 
+  const seekTo = (next) => {
+    if (!audioRef.current) return
+    const clamped = Math.max(0, Math.min(next, duration || 0))
+    audioRef.current.currentTime = clamped
+    setCurrentTime(clamped)
+  }
+
+  useEffect(() => {
+    setIsPlaying(false)
+    setCurrentTime(0)
+    setDuration(0)
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+    }
+  }, [result?.audioUrl])
+
+  const formatTime = (seconds) => {
+    if (!Number.isFinite(seconds)) return '0:00'
+    const s = Math.max(0, Math.floor(seconds))
+    const m = Math.floor(s / 60)
+    const r = s % 60
+    return `${m}:${String(r).padStart(2, '0')}`
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
-      {/* Animated background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 via-white to-sky-50 text-slate-900 selection:bg-cyan-200">
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-cyan-300/35 blur-3xl" />
+        <div className="absolute -right-20 top-24 h-96 w-96 rounded-full bg-emerald-200/35 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-orange-200/40 blur-3xl" />
       </div>
 
-      <div className="container mx-auto px-4 py-12 max-w-6xl relative">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="relative mb-8">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 blur-3xl rounded-3xl"></div>
-            <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
-              <div className="flex items-center justify-center gap-6 mb-6">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-50 animate-pulse"></div>
-                  <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-2xl">
-                    <Mic className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                <h1 className="text-6xl font-bold bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
-                  EchoSearch
-                </h1>
-              </div>
-              <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                Transform any question into a podcast-style audio response powered by AI
-              </p>
-              <div className="flex items-center justify-center gap-6 mt-6">
-                <div className="flex items-center gap-2 text-gray-500 text-sm">
-                  <Zap className="w-4 h-4" />
-                  <span>Fast</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-500 text-sm">
-                  <Waves className="w-4 h-4" />
-                  <span>Audio-First</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-500 text-sm">
-                  <Headphones className="w-4 h-4" />
-                  <span>Immersive</span>
-                </div>
-              </div>
+      <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-8 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between rounded-2xl border border-slate-200/80 bg-white/85 px-4 py-3 shadow-sm backdrop-blur">
+          <div className="flex items-center gap-3">
+            <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-cyan-500 to-emerald-500 text-white shadow-sm">
+              <Mic className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold tracking-wide">EchoSearch</p>
+              <p className="text-xs text-slate-600">Audio answers with readable transcripts</p>
             </div>
           </div>
-          
-          {/* Hero Image */}
-          <div className="relative mb-12">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-3xl rounded-3xl"></div>
-            <img 
-              src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=400&fit=crop"
-              alt="AI Technology"
-              className="relative w-full h-64 object-cover rounded-3xl opacity-80"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent rounded-3xl"></div>
+
+          <div className="hidden items-center gap-4 text-xs text-slate-600 sm:flex">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1">
+              <Zap className="h-3.5 w-3.5" />
+              Quick
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1">
+              <Waves className="h-3.5 w-3.5" />
+              Natural audio
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1">
+              <Headphones className="h-3.5 w-3.5" />
+              Listen and read
+            </span>
           </div>
         </div>
 
-        {/* Search Box */}
-        <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10 mb-8">
-          {/* Query Input */}
-          <div className="mb-8">
-            <label className="block text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">
-              Your Question
-            </label>
-            <div className="relative">
-              <textarea
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="What would you like to know about?"
-                rows={4}
-                className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 resize-none text-lg transition-all"
-              />
-              <div className="absolute bottom-4 right-4 text-gray-500 text-sm">
-                Press Enter to search
-              </div>
-            </div>
+        <div className="mt-10 grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
+          <div>
+            <h1 className="text-balance text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+              Ask a question and get a clear audio answer.
+            </h1>
+            <p className="mt-4 max-w-2xl text-pretty text-base leading-relaxed text-slate-700 sm:text-lg">
+              EchoSearch turns your question into a spoken explanation and a clean transcript, with reference topics included.
+            </p>
           </div>
 
-          {/* Mode Selector */}
-          <div className="mb-8">
-            <label className="block text-sm font-semibold text-gray-300 mb-4 uppercase tracking-wider">
-              Response Style
-            </label>
-            <div className="grid grid-cols-3 gap-4">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Response Style</p>
+            <div className="mt-3 grid gap-2">
               {modes.map((m) => {
                 const Icon = m.icon
                 const selected = mode === m.id
@@ -187,157 +190,179 @@ function App() {
                   <button
                     key={m.id}
                     onClick={() => setMode(m.id)}
-                    className={`relative overflow-hidden rounded-2xl border-2 transition-all group ${
+                    className={[
+                      'rounded-xl border px-3 py-3 text-left transition',
                       selected
-                        ? 'bg-white/10 border-purple-500/50 shadow-lg shadow-purple-500/10'
-                        : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
-                    }`}
+                        ? 'border-cyan-400 bg-cyan-50 shadow-[0_0_0_1px_rgba(34,211,238,0.18)_inset]'
+                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50',
+                      'focus:outline-none focus:ring-2 focus:ring-cyan-300',
+                    ].join(' ')}
+                    type="button"
                   >
-                    <div className={`absolute inset-0 bg-gradient-to-r ${m.color} opacity-0 rounded-2xl transition-opacity ${selected ? 'opacity-10' : 'group-hover:opacity-5'}`}></div>
-                    <div className="relative">
-                      {/* Image */}
-                      <div className="relative h-32 mb-3 overflow-hidden rounded-xl">
-                        <img 
-                          src={m.image} 
-                          alt={m.name}
-                          className={`w-full h-full object-cover transition-transform group-hover:scale-110 ${selected ? 'opacity-100' : 'opacity-60'}`}
-                        />
-                        <div className={`absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent ${selected ? 'opacity-30' : 'opacity-50'}`}></div>
+                    <div className="flex items-center gap-2.5">
+                      <span
+                        className={[
+                          'grid h-8 w-8 place-items-center rounded-lg text-white',
+                          selected ? `bg-gradient-to-br ${m.accent}` : 'bg-slate-300',
+                        ].join(' ')}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900">{m.name}</p>
+                        <p className="text-xs text-slate-600">{m.description}</p>
                       </div>
-                      <div className={`w-10 h-10 mx-auto mb-2 rounded-xl flex items-center justify-center transition-all -mt-6 relative z-10 ${
-                        selected 
-                          ? `bg-gradient-to-r ${m.color}` 
-                          : 'bg-white/10 backdrop-blur'
-                      }`}>
-                        <Icon className={`w-5 h-5 ${selected ? 'text-white' : 'text-gray-400'}`} />
-                      </div>
-                      <div className={`text-sm font-semibold ${selected ? 'text-white' : 'text-gray-400'}`}>
-                        {m.name}
-                      </div>
-                      <div className="text-xs text-gray-500 mt-1">{m.description}</div>
                     </div>
                   </button>
                 )
               })}
             </div>
           </div>
+        </div>
 
-          {/* Search Button */}
-          <button
-            onClick={handleSearch}
-            disabled={isLoading || !query.trim()}
-            className="w-full px-8 py-5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-700 disabled:to-gray-800 disabled:cursor-not-allowed text-white font-semibold rounded-2xl transition-all flex items-center justify-center gap-3 text-lg shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 disabled:shadow-none"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-6 h-6 animate-spin" />
-                Generating Audio Response...
-              </>
-            ) : (
-              <>
-                <Search className="w-6 h-6" />
-                Generate Audio Response
-              </>
-            )}
-          </button>
+        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-base font-semibold text-slate-900">Your question</p>
+              <p className="mt-1 text-sm text-slate-600">Press Enter to generate. Use Shift + Enter for a new line.</p>
+            </div>
+            <p className="hidden rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700 sm:block">
+              Selected style: <span className="font-semibold text-slate-900">{selectedMode.name}</span>
+            </p>
+          </div>
 
-          {/* Error Message */}
+          <textarea
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Example: Explain how photosynthesis works in one minute."
+            rows={5}
+            className="mt-5 w-full resize-none rounded-2xl border border-slate-300 bg-white px-5 py-4 text-base leading-relaxed text-slate-900 placeholder:text-slate-500 outline-none transition focus:border-cyan-400 focus:ring-4 focus:ring-cyan-100"
+          />
+
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2 text-xs text-slate-600">
+              <span className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                Server: npm run dev:server on port 3001
+              </span>
+              <span className="hidden sm:inline">Audio format: MP3</span>
+            </div>
+
+            <button
+              onClick={handleSearch}
+              disabled={isLoading || !query.trim()}
+              className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-emerald-500 px-6 py-4 text-base font-semibold text-white shadow-sm transition hover:from-cyan-600 hover:to-emerald-600 focus:outline-none focus:ring-4 focus:ring-cyan-200 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+              type="button"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Generating audio...
+                </>
+              ) : (
+                <>
+                  <Search className="h-5 w-5" />
+                  Generate audio response
+                </>
+              )}
+            </button>
+          </div>
+
           {error && (
-            <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3 animate-in slide-in-from-top-2">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-red-300 text-sm">{error}</p>
+            <div className="mt-5 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4">
+              <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-500" />
+              <div className="text-sm text-red-700">{error}</div>
             </div>
           )}
         </div>
 
-        {/* Results */}
         {result && (
-          <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/10 animate-in slide-in-from-bottom-4">
-            {/* Audio Player */}
-            <div className="mb-8 p-6 bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-2xl border border-purple-500/20">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-5">
-                  <button
-                    onClick={togglePlayback}
-                    className="relative group"
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
-                    <div className="relative w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg">
-                      {isPlaying ? (
-                        <Pause className="w-8 h-8 text-white" />
-                      ) : (
-                        <Play className="w-8 h-8 text-white ml-1" />
-                      )}
-                    </div>
-                  </button>
+          <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
+              <div>
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-slate-100">
+                    <Headphones className="h-4 w-4 text-slate-700" />
+                  </div>
                   <div>
-                    <p className="text-white font-semibold text-lg">Audio Response</p>
-                    <p className="text-gray-400 text-sm flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-purple-500/20 rounded-full text-purple-300 text-xs uppercase tracking-wider">
-                        {modes.find(m => m.id === mode)?.name}
-                      </span>
+                    <p className="text-sm font-semibold text-slate-900">Audio answer</p>
+                    <p className="text-xs text-slate-600">
+                      Style: {selectedMode.name}
+                      {typeof result.audioSize === 'number' ? ` • ${(result.audioSize / 1024).toFixed(1)} KB` : ''}
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-gray-400 text-sm font-medium">
-                    {(result.audioSize / 1024).toFixed(1)} KB
-                  </div>
-                  <div className="text-gray-500 text-xs">MP3 Audio</div>
-                </div>
-              </div>
-              <audio
-                ref={audioRef}
-                src={result.audioUrl}
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-                onEnded={() => setIsPlaying(false)}
-                className="hidden"
-              />
-            </div>
 
-            {/* Answer Text */}
-            <div className="mb-8">
-              <h3 className="text-white font-semibold mb-4 flex items-center gap-3 text-lg">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-                  <BookOpen className="w-4 h-4 text-white" />
+                <div className="mt-5 flex items-center gap-4">
+                  <button
+                    onClick={togglePlayback}
+                    className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white transition hover:from-cyan-600 hover:to-emerald-600 focus:outline-none focus:ring-4 focus:ring-cyan-200"
+                    type="button"
+                  >
+                    {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 translate-x-[1px]" />}
+                  </button>
+
+                  <div className="min-w-0 flex-1">
+                    <input
+                      type="range"
+                      min={0}
+                      max={Math.max(0, duration || 0)}
+                      value={Math.min(currentTime, duration || 0)}
+                      onChange={(e) => seekTo(Number(e.target.value))}
+                      className="w-full accent-cyan-500"
+                      aria-label="Seek audio"
+                    />
+                    <div className="mt-1 flex items-center justify-between text-xs text-slate-600">
+                      <span>{formatTime(currentTime)}</span>
+                      <span>{duration ? formatTime(duration) : '0:00'}</span>
+                    </div>
+                  </div>
                 </div>
-                Transcript
-              </h3>
-              <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                <p className="text-gray-300 leading-relaxed text-lg">{result.answer}</p>
+
+                <audio
+                  ref={audioRef}
+                  src={result.audioUrl}
+                  onLoadedMetadata={() => setDuration(audioRef.current?.duration ?? 0)}
+                  onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime ?? 0)}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onEnded={() => setIsPlaying(false)}
+                  className="hidden"
+                />
+
+                {result.sources && result.sources.length > 0 && (
+                  <div className="mt-6">
+                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+                      <LinkIcon className="h-4 w-4" />
+                      Reference Topics
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {result.sources.map((source, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700"
+                          title={source.url || source.topic}
+                        >
+                          {source.topic}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Transcript</p>
+                <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-slate-700">{result.answer}</p>
               </div>
             </div>
-
-            {/* Sources */}
-            {result.sources && result.sources.length > 0 && (
-              <div>
-                <h3 className="text-white font-semibold mb-4 flex items-center gap-3 text-lg">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
-                    <Search className="w-4 h-4 text-white" />
-                  </div>
-                  Knowledge Sources
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {result.sources.map((source, index) => (
-                    <span
-                      key={index}
-                      className="px-4 py-2 bg-white/5 rounded-xl text-sm text-gray-300 border border-white/10 hover:bg-white/10 transition-colors"
-                    >
-                      {source.topic}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         )}
 
-        {/* Footer */}
-        <div className="mt-12 text-center">
-          <p className="text-gray-600 text-sm">
-            Powered by ElevenLabs • Turbopuffer • Semantic Search
-          </p>
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-slate-200 pt-6 text-xs text-slate-500 sm:flex-row">
+          <p>Powered by ElevenLabs, Turbopuffer, and semantic search.</p>
+          <p>Designed for fast listening and easy reading.</p>
         </div>
       </div>
     </div>
