@@ -16,6 +16,12 @@ const sampleKnowledge = [
   { id: 10, text: "YC has funded over 4,000 startups including Airbnb, Dropbox, and Stripe.", topic: "yc" },
   { id: 11, text: "The YC program runs twice a year and accepts startups through a competitive application process.", topic: "yc" },
   { id: 12, text: "Y Combinator invests $500,000 in each startup for 7% equity.", topic: "yc" },
+  { id: 13, text: "Bloomberg LP is a financial, software, data, and media company headquartered in Midtown Manhattan, New York City.", topic: "bloomberg" },
+  { id: 14, text: "Bloomberg was founded by Michael Bloomberg in 1981 and has grown to become a global financial data and analytics powerhouse.", topic: "bloomberg" },
+  { id: 15, text: "The Bloomberg Terminal is a computer software system provided by Bloomberg L.P. that enables financial professionals to access Bloomberg's financial data.", topic: "bloomberg" },
+  { id: 16, text: "Bloomberg News is a global news organization delivering business and markets news, data, and analysis.", topic: "bloomberg" },
+  { id: 17, text: "Bloomberg Philanthropies focuses on public health, environment, education, and the arts, with over $10 billion in total giving.", topic: "bloomberg" },
+  { id: 18, text: "Michael Bloomberg served as the 108th mayor of New York City from 2002 to 2013 and is a major philanthropist.", topic: "bloomberg" },
 ]
 
 export async function semanticSearch(query, topK = 3) {
