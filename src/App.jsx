@@ -1,10 +1,31 @@
 import { useState, useRef } from 'react'
-import { Search, Mic, Play, Pause, Loader2, AlertCircle, Radio, BookOpen, Sparkles, Headphones, Zap, Waves } from 'lucide-react'
+import { Search, Mic, Play, Pause, Loader2, AlertCircle, Radio, BookOpen, Sparkles, Headphones, Zap, Waves, Image as ImageIcon } from 'lucide-react'
 
 const modes = [
-  { id: 'podcast', name: 'Podcast', icon: Radio, description: 'Conversational tone, like a podcast host', color: 'from-purple-500 to-pink-500' },
-  { id: 'professor', name: 'Professor', icon: BookOpen, description: 'Clear, structured, educational', color: 'from-blue-500 to-cyan-500' },
-  { id: 'story', name: 'Story', icon: Sparkles, description: 'Narrative storytelling with vivid descriptions', color: 'from-amber-500 to-orange-500' }
+  { 
+    id: 'podcast', 
+    name: 'Podcast', 
+    icon: Radio, 
+    description: 'Conversational tone, like a podcast host', 
+    color: 'from-purple-500 to-pink-500',
+    image: 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=400&h=300&fit=crop'
+  },
+  { 
+    id: 'professor', 
+    name: 'Professor', 
+    icon: BookOpen, 
+    description: 'Clear, structured, educational', 
+    color: 'from-blue-500 to-cyan-500',
+    image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=300&fit=crop'
+  },
+  { 
+    id: 'story', 
+    name: 'Story', 
+    icon: Sparkles, 
+    description: 'Narrative storytelling with vivid descriptions', 
+    color: 'from-amber-500 to-orange-500',
+    image: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=400&h=300&fit=crop'
+  }
 ]
 
 function App() {
@@ -82,36 +103,52 @@ function App() {
         <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 max-w-5xl relative">
+      <div className="container mx-auto px-4 py-12 max-w-6xl relative">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center gap-4 mb-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-50 animate-pulse"></div>
-              <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-2xl">
-                <Mic className="w-8 h-8 text-white" />
+          <div className="relative mb-8">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 blur-3xl rounded-3xl"></div>
+            <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
+              <div className="flex items-center justify-center gap-6 mb-6">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-50 animate-pulse"></div>
+                  <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-2xl">
+                    <Mic className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <h1 className="text-6xl font-bold bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
+                  EchoSearch
+                </h1>
+              </div>
+              <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                Transform any question into a podcast-style audio response powered by AI
+              </p>
+              <div className="flex items-center justify-center gap-6 mt-6">
+                <div className="flex items-center gap-2 text-gray-500 text-sm">
+                  <Zap className="w-4 h-4" />
+                  <span>Fast</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-500 text-sm">
+                  <Waves className="w-4 h-4" />
+                  <span>Audio-First</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-500 text-sm">
+                  <Headphones className="w-4 h-4" />
+                  <span>Immersive</span>
+                </div>
               </div>
             </div>
-            <h1 className="text-6xl font-bold bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
-              EchoSearch
-            </h1>
           </div>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            Transform any question into a podcast-style audio response powered by AI
-          </p>
-          <div className="flex items-center justify-center gap-6 mt-6">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Zap className="w-4 h-4" />
-              <span>Fast</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Waves className="w-4 h-4" />
-              <span>Audio-First</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <Headphones className="w-4 h-4" />
-              <span>Immersive</span>
-            </div>
+          
+          {/* Hero Image */}
+          <div className="relative mb-12">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-3xl rounded-3xl"></div>
+            <img 
+              src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=400&fit=crop"
+              alt="AI Technology"
+              className="relative w-full h-64 object-cover rounded-3xl opacity-80"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent rounded-3xl"></div>
           </div>
         </div>
 
@@ -150,7 +187,7 @@ function App() {
                   <button
                     key={m.id}
                     onClick={() => setMode(m.id)}
-                    className={`relative p-5 rounded-2xl border-2 transition-all group ${
+                    className={`relative overflow-hidden rounded-2xl border-2 transition-all group ${
                       selected
                         ? 'bg-white/10 border-purple-500/50 shadow-lg shadow-purple-500/10'
                         : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
@@ -158,12 +195,21 @@ function App() {
                   >
                     <div className={`absolute inset-0 bg-gradient-to-r ${m.color} opacity-0 rounded-2xl transition-opacity ${selected ? 'opacity-10' : 'group-hover:opacity-5'}`}></div>
                     <div className="relative">
-                      <div className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center transition-all ${
+                      {/* Image */}
+                      <div className="relative h-32 mb-3 overflow-hidden rounded-xl">
+                        <img 
+                          src={m.image} 
+                          alt={m.name}
+                          className={`w-full h-full object-cover transition-transform group-hover:scale-110 ${selected ? 'opacity-100' : 'opacity-60'}`}
+                        />
+                        <div className={`absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent ${selected ? 'opacity-30' : 'opacity-50'}`}></div>
+                      </div>
+                      <div className={`w-10 h-10 mx-auto mb-2 rounded-xl flex items-center justify-center transition-all -mt-6 relative z-10 ${
                         selected 
                           ? `bg-gradient-to-r ${m.color}` 
-                          : 'bg-white/5'
+                          : 'bg-white/10 backdrop-blur'
                       }`}>
-                        <Icon className={`w-6 h-6 ${selected ? 'text-white' : 'text-gray-400'}`} />
+                        <Icon className={`w-5 h-5 ${selected ? 'text-white' : 'text-gray-400'}`} />
                       </div>
                       <div className={`text-sm font-semibold ${selected ? 'text-white' : 'text-gray-400'}`}>
                         {m.name}
