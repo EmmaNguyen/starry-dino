@@ -428,7 +428,7 @@ function App() {
               <div className="bg-[#fff8ec] p-6 sm:p-8">
                 <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#9c6c26]">Read along</p>
                 <div className="mt-4 rounded-[1.75rem] bg-white p-5 shadow-inner">
-                  <div className="prose prose-sm max-w-none text-[#5c4c6b] prose-headings:text-[#5d3271] prose-p:leading-8 prose-strong:text-[#5d3271]">
+                  <div className="prose prose-lg max-w-none text-[#5c4c6b] prose-headings:text-[#5d3271] prose-p:leading-9 prose-strong:text-[#5d3271] prose-p:text-xl">
                     <ReactMarkdown>{result.answer}</ReactMarkdown>
                   </div>
                 </div>
