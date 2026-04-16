@@ -70,7 +70,7 @@ function App() {
 
   const handleSearch = async () => {
     if (!query.trim()) {
-      setError('Please type a question first.')
+      setError('Please ask the stars something first!')
       return
     }
 
@@ -103,7 +103,7 @@ function App() {
 
       setResult(data)
     } catch (err) {
-      setError(err.message || 'I could not make a voice answer. Make sure the server is running on port 3001.')
+      setError(err.message || 'The stars are too far away right now. Try again soon!')
     } finally {
       setIsLoading(false)
     }
@@ -287,8 +287,8 @@ function App() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#9c6c26]">Ask the stars</p>
-                <p className="mt-2 font-display text-4xl leading-none text-[#5d3271]">What do you want to know?</p>
-                <p className="mt-3 text-base text-[#6b5680]">Press Enter to go. Press Shift and Enter for a new line.</p>
+                <p className="mt-2 font-display text-4xl leading-none text-[#5d3271]">What should we learn about?</p>
+                <p className="mt-3 text-base text-[#6b5680]">Press Enter to start. Shift+Enter for a new line.</p>
               </div>
               <div className="hidden rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#7b4aa8] shadow-sm sm:block">
                 Voice: {selectedMode.name}
@@ -299,7 +299,7 @@ function App() {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Why is the moon bright?"
+              placeholder="How do stars twinkle?"
               rows={5}
               className="mt-5 w-full resize-none rounded-[1.75rem] border-4 border-[#ffd98d] bg-white px-5 py-4 text-lg leading-relaxed text-[#4e3e5b] placeholder:text-[#baacc7] outline-none transition focus:border-[#8de5ff] focus:ring-4 focus:ring-[#8de5ff]/30"
             />
@@ -308,10 +308,10 @@ function App() {
               <div className="flex flex-wrap items-center gap-2 text-sm text-[#7b6992]">
                 <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-sm">
                   <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                  Voice server on port 3001
+                  ON
                 </span>
                 <span className="inline-flex items-center gap-2 rounded-full bg-[#fff2ca] px-3 py-2 shadow-sm">
-                  MP3 sound
+                  Space sounds
                 </span>
               </div>
 
@@ -324,12 +324,12 @@ function App() {
                 {isLoading ? (
                   <>
                     <Loader2 className="h-6 w-6 animate-spin" />
-                    Making magic...
+                    Calling the stars...
                   </>
                 ) : (
                   <>
                     <Search className="h-6 w-6" />
-                    Go!
+                    Blast off!
                   </>
                 )}
               </button>
