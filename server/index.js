@@ -32,7 +32,7 @@ app.post('/api/search', async (req, res) => {
     console.log(`Processing query: "${query}" in mode: ${mode}`)
     
     // Use VoiceChatbot to process the question (handles memory, Qwen text generation, etc.)
-    const answer = await chatbot.processQuestion(query)
+    const answer = await chatbot.processQuestion(query, mode)
     console.log('Generated answer using VoiceChatbot')
     
     // Generate audio using ElevenLabs

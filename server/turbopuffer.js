@@ -48,7 +48,7 @@ async function generateQwenEmbedding(text) {
 }
 
 // Generate text using Qwen chat API
-export async function generateQwenText(prompt, maxTokens = 300) {
+export async function generateQwenText(prompt, systemPrompt = null, maxTokens = 300) {
   const apiKey = process.env.QWEN_API_KEY
   
   if (!apiKey) {
@@ -67,7 +67,7 @@ export async function generateQwenText(prompt, maxTokens = 300) {
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful AI assistant. Answer the user\'s question concisely and clearly based on the provided context.'
+            content: systemPrompt || 'You are a helpful AI assistant. Answer the user\'s question concisely and clearly based on the provided context.'
           },
           {
             role: 'user',
@@ -205,11 +205,18 @@ export class VoiceChatbot {
     // Simple in-memory cache for frequent queries
     this.cache = new Map()
     this.cacheMaxSize = 100
+    
+    // Mode-specific system prompts
+    this.systemPrompts = {
+      podcast: "You are an engaging podcast host. Use conversational tone, enthusiasm, and storytelling. Use phrases like 'Let's dive in', 'Here's the thing', 'Think about it this way'. Keep it lively and accessible.",
+      professor: "You are a clear, structured academic professor. Use precise language, logical structure, and educational explanations. Include relevant terminology, break down complex concepts, and provide structured explanations with clear reasoning.",
+      story: "You are a master storyteller. Use vivid descriptions, narrative arc, emotional language, and immersive storytelling. Create a compelling narrative flow with sensory details and character-driven explanations."
+    }
   }
 
-  async generateAnswer(question) {
+  async generateAnswer(question, mode = 'podcast') {
     // Check cache first
-    const cacheKey = question.toLowerCase().trim()
+    const cacheKey = `${question.toLowerCase().trim()}:${mode}`
     if (this.cache.has(cacheKey)) {
       console.log('✓ Cache hit for query')
       return this.cache.get(cacheKey)
@@ -234,9 +241,12 @@ export class VoiceChatbot {
 
     // Build prompt with memory context only (like CLI chatbot)
     const prompt = `${context}Question: ${question}\n\nAnswer:`
+    
+    // Get mode-specific system prompt
+    const systemPrompt = this.systemPrompts[mode] || this.systemPrompts.podcast
 
     try {
-      const answer = await generateQwenText(prompt, 300)
+      const answer = await generateQwenText(prompt, systemPrompt, 300)
       
       // Cache the result
       if (this.cache.size >= this.cacheMaxSize) {
@@ -255,14 +265,14 @@ export class VoiceChatbot {
     }
   }
 
-  async processQuestion(question) {
+  async processQuestion(question, mode = 'podcast') {
     // Store question in memory
     if (this.memory) {
       await this.memory.addMessage('user', question)
     }
 
-    // Generate answer
-    const answer = await this.generateAnswer(question)
+    // Generate answer with mode
+    const answer = await this.generateAnswer(question, mode)
 
     // Store answer in memory
     if (this.memory) {

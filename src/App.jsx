@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import {
   Search,
   Mic,
@@ -354,7 +355,9 @@ function App() {
 
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Transcript</p>
-                <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-slate-700">{result.answer}</p>
+                <div className="mt-3 text-sm leading-relaxed text-slate-700 prose prose-sm max-w-none">
+                  <ReactMarkdown>{result.answer}</ReactMarkdown>
+                </div>
               </div>
             </div>
           </div>
