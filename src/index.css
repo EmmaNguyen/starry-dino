@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    color-scheme: light;
+    color-scheme: dark;
   }
 
   html {
@@ -15,17 +15,125 @@
   }
 
   body {
-    font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
-    @apply bg-stone-50 text-slate-900;
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    @apply bg-[#20145c] text-slate-900;
   }
 }
 
 @layer utilities {
+  .font-display {
+    font-family: 'Baloo 2', 'Trebuchet MS', sans-serif;
+  }
+
   .text-balance {
     text-wrap: balance;
   }
+}
 
-  .text-pretty {
-    text-wrap: pretty;
+.star-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.65);
+}
+
+.moon-glow {
+  box-shadow: 0 0 0 12px rgba(255, 240, 166, 0.18), 0 0 60px rgba(255, 240, 166, 0.38);
+}
+
+.kid-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 9999px;
+  background: #fff7c2;
+  border: 3px solid #ffcb69;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+
+.kid-slider::-moz-range-thumb {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 9999px;
+  background: #fff7c2;
+  border: 3px solid #ffcb69;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+
+.kid-slider::-webkit-slider-runnable-track {
+  height: 0.6rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.kid-slider::-moz-range-track {
+  height: 0.6rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.floating {
+  animation: floating 6s ease-in-out infinite;
+}
+
+.floating-slow {
+  animation: floating 8.5s ease-in-out infinite;
+}
+
+.floating-fast {
+  animation: floating 5s ease-in-out infinite;
+}
+
+.twinkle-a {
+  animation: twinkle-a 3.2s ease-in-out infinite;
+}
+
+.twinkle-b {
+  animation: twinkle-b 4.1s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes twinkle-a {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes twinkle-b {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.75);
+  }
+
+  40% {
+    opacity: 0.9;
+    transform: scale(1.15);
+  }
+
+  70% {
+    opacity: 0.6;
+    transform: scale(0.95);
   }
 }
