@@ -94,7 +94,11 @@ function App() {
     setResult(null)
 
     try {
-      const response = await fetch('http://localhost:3001/api/search', {
+      const apiUrl = import.meta.env.PROD 
+        ? '/api/search' 
+        : 'http://localhost:3001/api/search'
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
