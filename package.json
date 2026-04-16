@@ -12,24 +12,26 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "lucide-react": "^0.344.0",
     "@elevenlabs/elevenlabs-js": "^2.39.0",
-    "express": "^4.19.2",
+    "@seekdb/qwen": "^1.2.0",
+    "@turbopuffer/turbopuffer": "^0.5.0",
+    "compression": "^1.8.1",
     "cors": "^2.8.5",
-    "@turbopuffer/turbopuffer": "^0.5.0"
+    "express": "^4.19.2",
+    "lucide-react": "^0.344.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/ui": "^1.6.0",
     "autoprefixer": "^10.4.19",
+    "dotenv": "^16.4.5",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
     "vite": "^5.2.11",
-    "vitest": "^1.6.0",
-    "@vitest/ui": "^1.6.0",
-    "dotenv": "^16.4.5"
+    "vitest": "^1.6.0"
   }
 }

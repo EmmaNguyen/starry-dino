@@ -1,8 +1,8 @@
 import express from 'express'
 import cors from 'cors'
+import compression from 'compression'
 import dotenv from 'dotenv'
-import { semanticSearch } from './turbopuffer.js'
-import { generateRAGAnswer } from './rag.js'
+import { VoiceChatbot } from './turbopuffer.js'
 import { generateAudio } from './audio.js'
 
 dotenv.config({ path: '.env.local' })
@@ -10,8 +10,14 @@ dotenv.config({ path: '.env.local' })
 const app = express()
 const PORT = process.env.PORT || 3001
 
+// Initialize VoiceChatbot with Turbopuffer API key
+const turbopufferApiKey = process.env.TURBOPUFFER_API_KEY
+const chatbot = new VoiceChatbot(turbopufferApiKey, 'web-chatbot-memory')
+console.log('✓ VoiceChatbot initialized')
+
 app.use(cors())
 app.use(express.json())
+app.use(compression())
 
 // Health check
 app.get('/health', (req, res) => {
@@ -25,15 +31,11 @@ app.post('/api/search', async (req, res) => {
     
     console.log(`Processing query: "${query}" in mode: ${mode}`)
     
-    // Step 1: Semantic search to retrieve relevant context
-    const { context, sources } = await semanticSearch(query)
-    console.log('Retrieved context from knowledge base')
+    // Use VoiceChatbot to process the question (handles memory, Qwen text generation, etc.)
+    const answer = await chatbot.processQuestion(query)
+    console.log('Generated answer using VoiceChatbot')
     
-    // Step 2: Generate RAG answer using LLM
-    const answer = await generateRAGAnswer(query, context, mode)
-    console.log('Generated RAG answer')
-    
-    // Step 3: Generate audio using ElevenLabs
+    // Generate audio using ElevenLabs
     const audioStream = await generateAudio(answer, mode)
     console.log('Generated audio')
     
@@ -55,7 +57,6 @@ app.post('/api/search', async (req, res) => {
       query,
       mode,
       answer,
-      sources,
       audioData: audioBuffer.toString('base64'),
       audioSize: totalBytes
     })

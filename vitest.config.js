@@ -7,5 +7,9 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     env: '.env.local',
+    reporter: ['verbose'],
+    reporters: ['verbose'],
+    silent: false,
+    logHeapUsage: true,
   },
 })
